@@ -1,7 +1,7 @@
 import random
 
-MAX_GENERATIONS = 1000
-POPULATION_NO = 50
+MAX_GENERATIONS = 3000
+POPULATION_NO = 100
 N_QUEENS = 8
 MUTATION_RATE = 0.1
 
@@ -14,10 +14,6 @@ def main():
         fitness_vals = fitness_function(populations)
         best_fitness = max(fitness_vals)
         pop_index = fitness_vals.index(max(fitness_vals))
-        print(f"Fitness values are {fitness_vals}, "
-              f"Population is {populations}, "
-              f"Maximum fitness is {best_fitness}"
-              f"Population Index is {pop_index}")
         print("-------------------------------------------------------------------------")
         print(f"Generation {generations}'s maximum fitness score is {max(fitness_vals)} for the population, {populations[pop_index]}")
         if best_fitness == N_QUEENS * (N_QUEENS - 1) // 2:
@@ -28,7 +24,6 @@ def main():
         new_gen = crossover(offsprings)
         populations = mutation(new_gen)
         generations += 1
-        print("-------------------------------------------------------------------------")
     if generations >= MAX_GENERATIONS:
         print("Solution not found")
 
@@ -55,7 +50,6 @@ def fitness_function(populations):
                     # First condition is for checking rows and columns. Second is for diagonals
                     non_attacking_queens += 1
         fitness_values.append(non_attacking_queens)  # For each values
-    print(fitness_values)
     return fitness_values
 
 
@@ -79,7 +73,6 @@ def generate_indices(cumulative_prob_values, no_of_parents):
         weights=cumulative_prob_values,
         k=no_of_parents
     )
-    print(f"Indices are {indices}")
     return indices
 
 
@@ -93,14 +86,12 @@ def selection(populations, cumulative_prob_values):
 def crossover(offsprings):
     # We calculate single crossover point
     crossover_point = random.randint(1, N_QUEENS-1)
-    print(f"Before Crossover, Crossover Point {crossover_point}, Offsprings {offsprings}")
     for i in range(0, len(offsprings) - 1, 2):
         # Perform crossover between pairs
         parent1, parent2 = offsprings[i], offsprings[i + 1]
         child1 = parent1[:crossover_point] + parent2[crossover_point:]
         child2 = parent2[:crossover_point] + parent1[crossover_point:]
         offsprings[i], offsprings[i + 1] = child1, child2
-    print(f"After Crossover, Crossover Point {crossover_point}, Offsprings {offsprings}")
     return offsprings
 
 
