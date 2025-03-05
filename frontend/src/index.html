@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css"/>
+    <!-- Mallanna Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+
+
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+        html {
+            scroll-behavior: smooth;
+        }
+
+        @theme {
+          --color-grey: #02161d;
+          --color-board-white: #f2e9d5;
+          --color-blackish: #0c1315;
+          --color-light-black: #111c1f;
+          --color-grayish: #2d2d2d;
+          --color-light-gray: #e1e1e1;
+          --color-button-green: #3DBF36; 
+          --color-button-hover-green: #34A22E; 
+          --grid-rows: 1;
+          --grid-cols: 1;
+          --spin-animation: spin 5s infinite ease-in-out;
+          --wiggle-animation: wiggle 2.5s infinite ease-in-out;
+          --pulse-animation: pulse 2.5s infinite linear;
+          --font-mallanna: "Mallanna", serif;
+        }
+
+        @keyframes spin {
+        20%, 100% {
+            transform: rotate(360deg);
+        }
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            30% {
+                opacity: 0.5;
+            }
+
+            40%, 100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes blinkIn {
+            0% {
+                opacity: 1;
+            }
+            10% {
+                opacity: 0;
+            }
+
+            20%, 100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes blinkOut {
+            0% {
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+
+            20%, 100% {
+                opacity: 0;
+            }   
+        }
+
+            @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes wiggle {
+            0%, 20% {
+            transform: rotate(-3deg);
+            }
+            10%, 30% {
+            transform: rotate(3deg);
+            }
+            
+            50%, 100% {
+            transform: rotate(0deg);
+            }
+        }
+        @layer utilities {
+            .bg-gradient-custom {
+                background-image: linear-gradient(#FFF3DC, #FFFCF5);
+            }
+            
+            .bg-gradient-black {
+                background-image: linear-gradient(#0c1315, #2d2d2d);
+            }
+
+            .blink-in-animation {
+                animation: blinkIn 5s infinite linear;
+            }
+
+            .blink-out-animation {
+                animation: blinkOut 5s infinite linear;
+            }
+
+            .blink {
+                animation: blink 1s infinite linear;
+            }
+
+            .white {
+                background-color: white;
+            }
+
+            .white:hover {
+                background-color: rgb(231, 231, 231);
+
+            }
+
+            .black {
+                background-color: black;
+            }
+
+            .black:hover {
+                background-color: rgb(24, 24, 24);
+            }
+
+            .grid-container {
+                display: grid;
+                grid-template-rows: repeat(var(--grid-rows), 1fr);
+                grid-template-columns: repeat(var(--grid-cols), 1fr);
+            }
+
+            .grid-item {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+            }
+
+            .red {
+                color: red;
+            }
+
+            .green {
+                color: green;
+            }
+
+        }
+    
+      </style>  
+    <title>N Queens Problem</title>
+</head>
+<body>
+    <nav class="absolute w-[100%] py-3 z-20 backdrop-blur-[4px] text-white font-bold">
+        <ul class="flex justify-center items-center mx-5 ">
+            <li class="my-1">
+                <svg class="w-[40px] h-[40px] md:w-[50px] md:h-[50px]" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 512 512"><path fill="#fff" d="M256 96a48 48 0 1 0 0-96a48 48 0 1 0 0 96m-95.2-8c-18.1 0-31.3 12.8-35.6 26.9c-8 26.2-32.4 45.2-61.2 45.2c-10 0-19.4-2.3-27.7-6.3c-7.6-3.7-16.7-3.3-24 1.2c-11.6 7.1-15.4 22.1-8.6 33.9L97.6 352H153L70 207.9c40.5-2.2 75.3-25.9 93.1-59.8c22 26.8 55.4 43.9 92.8 43.9s70.8-17.1 92.8-43.9c17.8 34 52.6 57.7 93.1 59.8L359 352h55.4l93.9-163.1c6.8-11.7 3-26.7-8.6-33.8c-7.3-4.5-16.4-4.9-24-1.2c-8.4 4-17.7 6.3-27.7 6.3c-28.8 0-53.2-19-61.2-45.2c-4.3-14.2-17.5-27-35.6-27c-14.5 0-26.3 8.5-32.4 19.3c-12.4 22-35.9 36.7-62.8 36.7s-50.4-14.8-62.8-36.7C187.1 96.5 175.4 88 160.8 88m-27.6 344h245.6l16.6 32H116.7l16.6-32zm283.7-30.7c-5.5-10.6-16.5-17.3-28.4-17.3h-265c-12 0-22.9 6.7-28.4 17.3l-26.5 51.2c-3 5.8-4.6 12.2-4.6 18.7c0 22.5 18.2 40.8 40.8 40.8h302.5c22.5 0 40.8-18.2 40.8-40.8c0-6.5-1.6-12.9-4.6-18.7L417 401.3z"/></svg>
+            </li>
+            <li class="font-mallanna font-normal text-[20px] md:text-[40px] px-0.5 md:px-2 pt-1">NQ</li>
+            <li class="ml-auto mx-2 md:mx-5 md:ml-auto relative inline-block after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#fff] after:transition-all after:duration-250 after:ease-out hover:after:w-full hover:tracking-[0.1rem] cursor-pointer transition-all ">
+                        <a href="index.html">Home</a>
+            </li>
+            <li class="mx-2 md:mx-5 relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-[2px] after:bottom-0 after:left-0 after:bg-[#fff] after:transition-transform after:duration-250 hover:after:scale-x-100 hover:tracking-[0.1rem] transition-all cursor-pointer">
+                <a href="#website-description">About</a>
+            </li>
+            <li class="mx-2 md:mx-5 relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-[2px] after:bottom-0 after:left-0 after:bg-[#fff] after:transition-transform after:duration-250 hover:after:scale-x-100 hover:tracking-[0.1rem] transition-all cursor-pointer">
+                <a href="https://www.linkedin.com/in/fahad-rasheed-57202b1b8/" target="_blank">Contact Us</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="">
+        <div class="relative overflow-hidden">
+            <img 
+                src="./assets/chess_background.jpg" alt="chess_background"
+                class="w-full 
+                       h-240
+                       object-cover object-bottom
+                ">
+            <h1 
+                class="text-7xl text-center md:text-right text-white   
+                       font-bold
+                       mt-90 mb-100 pl-180 mr-10
+                       md:mr-20
+                       transition-all   
+                       hover:tracking-[0.1rem]
+                       absolute inset-y-0 right-0
+                       drop-shadow-[4px_4px_1px_#404040] 
+                ">
+                    N-Queens Problem with Genetic Algorithm
+            </h1>
+    </div>
+    <div class="bg-gradient-custom">
+        <h1 id="website-description"  class="text-center font-bold text-[44px] p-10 hover:tracking-[0.1rem] transition-all">
+            Overview
+        </h1>
+        <div class="text-center border-2 border-black-100 mx-[20px] lg:mx-40 mb-30 py-20 px-5 leading-10">
+            The N-Queen Problem is a well-known challenge in combinatorial optimization that requires positioning 𝑁 queens on an 𝑁×𝑁 chessboard while ensuring that no two queens threaten each other. This means that no two queens can share the same row, column, or diagonal. As 𝑁 increases, the number of possible board configurations grows exponentially, making exhaustive search methods inefficient for larger values of 𝑁. Due to the vast search space and computational complexity, alternative strategies such as Genetic Algorithms are often employed to find optimal or near-optimal solutions. These heuristic methods leverage evolutionary principles, such as selection, crossover, and mutation, to iteratively refine candidate solutions and improve efficiency in finding valid queen placements.
+        </div>
+    </div>
+    <!-- <div class="bg-gradient-to-b from-blackish to-grayish py-40"> -->
+        <div class="bg-gradient-black py-40">
+            <h1 class="text-center text-white font-bold text-[44px] p-10 hover:tracking-[0.1rem] transition-all">
+                Steps
+            </h1>
+            <div class="flex justify-center items-center text-center flex-wrap">
+                <div class="bg-white w-[300px] h-[400px] m-3 rounded-[15px] p-[32px] text-center transition-all flex flex-col justify-center items-center hover:w-[310px] hover:h-[405px]">
+                    <h1 class="font-bold text-[24px] w-[240px]">Initialization</h1>
+                    <p class="text-center w-[240px]">Create a randomized population of potential solutions. These arrays 
+                        represent the queen's positions on the chessboard. The index represents the column, 
+                        and the row represents the value</p>
+                </div>
+                <div class="bg-white w-[300px] h-[400px] m-3 rounded-[15px] p-[32px] text-center transition-all hover:w-[310px] hover:h-[405px] flex flex-col justify-center items-center">
+                    <h1 class="font-bold text-[24px] w-[240px]">Fitness Evaluation</h1>
+                    <p class="text-center w-[240px]">Calculate each potential solution's fitness. The number of non-attacking pairs in the 8-Queens puzzle determines its fitness function.Based on those fitness values, probability values are calculated, which are the weighted average of the fitness 
+                    values and the cumulative probability values.</p>
+                </div>
+                <div class="bg-white w-[300px] h-[400px]  m-3 rounded-[15px] p-[32px] text-center transition-all hover:w-[310px] hover:h-[405px] flex flex-col justify-center items-center">
+                    <h1 class="font-bold text-[24px]">Crossover</h1>
+                    <p class="text-center w-[240px]">Select parents from the current population to create the next generation. Standard selection methods include Roulette Wheel Based Selection, Tournament Selection, and Rank Based Selection. For our implementation, we have used a Roulette Wheel Selection based on the cumulative probability values calculated in the previous step</p>
+                </div>
+                <div class="bg-white w-[300px] h-[400px] m-3 rounded-[15px] p-[32px] text-center transition-all hover:w-[310px] hover:h-[405px] flex flex-col justify-center">
+                    <h1 class="font-bold text-[24px]">Mutation</h1>
+                    <p class="text-center w-[240px]">Perform crossover between pairs of parents to create new offspring. Crossover involves exchanging genetic information to create a child solution. The crossover point is randomly generated and at that point, population values between two populations are swapped</p>
+                </div>
+            </div>
+    </div>
+    <div id="options-section" class="relative">
+        <button id="solution-button" class="text-white font-bold absolute bg-light-black transition-all h-[150px] w-[150px] lg:h-[200px] lg:w-[200px] top-[50%] left-[50%] rounded-[50%] translate-[-50%] flex justify-center items-center 
+        p-[32px] border-grayish border-10  text-[16px] lg:text-[24px] text-center z-10 " disabled onclick="findSolution()">
+            Find Solution! 
+        </button>
+        <form class="grid grid-cols-2 grid-rows-2 justify-items-center">
+            <div id="board-grid-item" class="flex flex-col justify-center items-center gap-4 bg-gradient-custom w-full py-16 px-5 lg:py-7 relative">
+                <svg id="board1" class="blink-in-animation w-[100px] h-[100px] lg:w-[200px] lg:h-[200px]" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24"><path fill="#000" d="M2 2h20v20H2zm2 2v4h4v4H4v4h4v4h4v-4h4v4h4v-4h-4v-4h4V8h-4V4h-4v4H8V4zm8 8H8v4h4zm0-4v4h4V8z"/>
+                </svg>
+                <svg id="board2" class="blink-out-animation absolute opacity-0 top-[89px]  sm:top-[89px] md:top-[71px]  lg:top-[44.5px] w-[95px] h-[85px] lg:w-[167px] lg:h-[167px]"  viewBox="0 0 167 167" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 166.667H166.667V9.15527e-05H0V166.667ZM16.6667 150V116.667H50V83.3334H16.6667V50.0001H50V16.6667H83.3333V50.0001H116.667V16.6667H150V50.0001H116.667V83.3334H150V116.667H116.667V150H83.3333V116.667H50V150H16.6667ZM83.3333 83.3334H50V50.0001H83.3333V83.3334ZM83.3333 116.667V83.3334H116.667V116.667H83.3333Z" fill="black"/>
+                    </svg>                    
+                </svg>
+                <label 
+                    id="board-size-label" 
+                    for="board-size-menu"
+                    class="font-bold text-[24px] lg:text-[32px]"
+                    >
+                        Board Size
+                </label>
+                <div class="flex items-center justify-center">
+                    <div id="decreaseBoardSizeButton" class="bg-button-green p-[5px_6px] lg:p-[10px_12px] rounded-[5px_0px_0px_5px] font-bold text-white text-[20px] cursor-pointer select-none hover:bg-button-hover-green" onclick="decreaseBoardSize()">-</div>
+                    <div id="counter_board" class="bg-white flex justify-center items-center text-center px-10 py-[1px] text-[24px] lg:text-[32px] font-bold select-none h-[40px] lg:h-[50px]">0</div>
+                    <div id="increaseBoardSizeButton" class="bg-button-green p-[5px] lg:p-[10px] rounded-[0px_5px_5px_0px] font-bold text-white text-[20px]  cursor-pointer select-none hover:bg-button-hover-green" onclick="increaseBoardSize()">+</div>
+                </div>
+            </div>
+            <div id="population-grid-item" class=" flex flex-col justify-center items-center gap-4 bg-gradient-black w-full py-16 px-5 lg:py-7 ">
+                <svg id="populations" class="animate-(--wiggle-animation) h-[100px] w-[100px] lg:h-[200px] lg:w-[200px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="#fff" stroke-width="2" d="M12 13a4 4 0 1 0 0-8a4 4 0 0 0 0 8Zm-6 9v-3a6 6 0 1 1 12 0v3M13 5c.404-1.664 2.015-3 4-3c2.172 0 3.98 1.79 4 4c-.02 2.21-1.828 4-4 4h-1h1c3.288 0 6 2.686 6 6v2M11 5c-.404-1.664-2.015-3-4-3c-2.172 0-3.98 1.79-4 4c.02 2.21 1.828 4 4 4h1h-1c-3.288 0-6 2.686-6 6v2"/></svg>
+                <label 
+                    class="font-bold text-white text-[24px] lg:text-[32px] text-center"
+                    id="pop-no-label" 
+                    for="pop-no"
+                    ><span class="translate-[-1000px] lg:visible">No. of</span> Populations
+                </label>
+                <div class="flex items-center justify-center">
+                    <div id="decreasePopButton" class="bg-button-green p-[5px_6px] lg:p-[10px_12px] rounded-[5px_0px_0px_5px] font-bold text-white text-[20px] cursor-pointer select-none hover:bg-button-hover-green" onclick="decreasePopulationSize()">-</div>
+                    <div id="counter-population" class="bg-white flex justify-center items-center text-center px-10 py-[1px] text-[24px] lg:text-[32px] font-bold select-none h-[40px] lg:h-[50px]">10</div>
+                    <div id="increasePopButton" class="bg-button-green p-[5px] lg:p-[10px] rounded-[0px_5px_5px_0px] font-bold text-white text-[20px]  cursor-pointer select-none hover:bg-button-hover-green" onclick="increasePopulationSize()">+</div>
+                </div>
+            </div>
+            <div class="flex flex-col justify-center items-center gap-4 bg-gradient-black w-full py-16 px-5 lg:py-7 ">
+                <svg id="dna" class="animate-(--pulse-animation) h-[100px] w-[100px] lg:h-[200px] lg:w-[200px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#fff" d="M9.2 13.73a1 1 0 0 0-1.41-.05A11.18 11.18 0 0 0 4 22a1 1 0 0 0 2 0a9.15 9.15 0 0 1 3.15-6.86a1 1 0 0 0 .05-1.41m10.17 4.64a10.9 10.9 0 0 0-1.6-3A14.3 14.3 0 0 0 14.06 12C16.3 10.57 20 7.4 20 2a1 1 0 0 0-2 0c0 5.4-4.59 8.17-6 8.89A13.4 13.4 0 0 1 9.31 9H12a1 1 0 0 0 0-2H7.55a9.4 9.4 0 0 1-1-2H15a1 1 0 0 0 0-2H6.06A8 8 0 0 1 6 2a1 1 0 0 0-2 0c0 7.57 7.3 10.79 7.61 10.92A13 13 0 0 1 14.7 15H12a1 1 0 0 0 0 2h4.43a9 9 0 0 1 1 2H9a1 1 0 0 0 0 2h8.94a8 8 0 0 1 .06 1a1 1 0 0 0 2 0a10.5 10.5 0 0 0-.22-2.19a9 9 0 0 0-.41-1.44"/></svg>
+                <label 
+                class="font-bold text-white text-[24px] lg:text-[32px] text-center"
+                id="mutation-rate-label" 
+                for="mutation-rate-input">
+                    Mutation Rate
+                </label>
+                <div class="flex items-center justify-center">
+                    <div id="decreaseMutRateButton" class="bg-button-green p-[5px_6px] lg:p-[10px_12px] rounded-[5px_0px_0px_5px] font-bold text-white text-[20px] cursor-pointer select-none hover:bg-button-hover-green" onclick="decreaseMutationRate()">-</div>
+                    <div id="counter-mutation" class="bg-white flex justify-center items-center text-center px-10 py-[1px] text-[24px] lg:text-[32px] font-bold select-none h-[40px] lg:h-[50px]">0.00</div>
+                    <div id="increaseMutRateButton" class="bg-button-green p-[5px] lg:p-[10px] rounded-[0px_5px_5px_0px] font-bold text-white text-[20px]  cursor-pointer select-none hover:bg-button-hover-green" onclick="increaseMutationRate()">+</div>
+                </div>
+                </div>
+            <div class="flex flex-col justify-center items-center gap-4 bg-gradient-custom w-full py-16 px-5 lg:py-7 ">
+                <svg
+                    class="animate-(--spin-animation) h-[100px] w-[100px] lg:h-[200px] lg:w-[200px]"  xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48"><g fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"><path d="M13 35H7V41"/><path d="M41 41H35V35"/><path d="M35 13H41V7"/><path d="M7 7H13V13"/><path d="M13 7.29395C7.57778 10.8714 4 17.0178 4 23.9999C4 25.0195 4.0763 26.0213 4.2235 26.9999"/><path d="M26.9999 43.7765C26.0213 43.9237 25.0195 44 23.9999 44C17.0178 44 10.8714 40.4222 7.29395 35"/><path d="M43.7765 21C43.9237 21.9786 44 22.9804 44 24C44 30.9821 40.4222 37.1285 35 40.706"/><path d="M21 4.2235C21.9786 4.0763 22.9804 4 24 4C30.9821 4 37.1285 7.57778 40.706 13"/></g>
+                    </svg>
+                <label  class="font-bold text-[24px] lg:text-[32px] text-center"
+                        id="max-gen-label" 
+                        for="max-gen"> 
+                        Maximum No. of Generations
+                    </label>
+                    <div class="flex items-center justify-center">
+                        <div id="decreaseMaxGenButton" class="bg-button-green p-[5px_6px] lg:p-[10px_12px] rounded-[5px_0px_0px_5px] font-bold text-white text-[20px] cursor-pointer select-none hover:bg-button-hover-green" onclick="decreaseMaxGenerations()">-</div>
+                        <div id="counter-max-generations" class="bg-white flex justify-center items-center text-center px-10 py-[1px] text-[24px] lg:text-[32px] font-bold select-none h-[40px] lg:h-[50px]">100</div>
+                        <div id="increaseMaxGenButton" class="bg-button-green p-[5px] lg:p-[10px] rounded-[0px_5px_5px_0px] font-bold text-white text-[20px]  cursor-pointer select-none hover:bg-button-hover-green" onclick="increaseMaxGenerations()">+</div>
+                    </div>
+                    
+                </div>
+            </form>
+        </div>   
+            
+            
+        <div class="bg-gradient-custom flex justify-evenly items-center text-center py-[50px] gap-20 flex-wrap">
+            <div id="board-text" class="flex flex-col justify-center items-center gap-10 lg:gap-14">
+                <div id="gen_num_text" class="flex flex-col justify-center items-center gap-5">
+                    <div id="generation_number" class="text-9xl font-bold">
+                        0
+                    </div>
+                    <div id="generation_num_label" class="font-bold text-4xl">
+                        Generation No.
+                    </div>
+            </div>
+                <div id="result-text" class="font-bold text-4xl w-[400px] transition-all">
+                    
+                </div>
+                <button id="rerun-btn" class="hidden sm:flex bg-button-green  justify-center items-center gap-3 text-white text-[32px] font-bold rounded-[5px] px-5 py-2" disabled onclick="findSolution()">
+                    Rerun 
+                    <svg
+                    class="h-[32px] w-[32px] mt-1"  xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"><path d="M13 35H7V41"/><path d="M41 41H35V35"/><path d="M35 13H41V7"/><path d="M7 7H13V13"/><path d="M13 7.29395C7.57778 10.8714 4 17.0178 4 23.9999C4 25.0195 4.0763 26.0213 4.2235 26.9999"/><path d="M26.9999 43.7765C26.0213 43.9237 25.0195 44 23.9999 44C17.0178 44 10.8714 40.4222 7.29395 35"/><path d="M43.7765 21C43.9237 21.9786 44 22.9804 44 24C44 30.9821 40.4222 37.1285 35 40.706"/><path d="M21 4.2235C21.9786 4.0763 22.9804 4 24 4C30.9821 4 37.1285 7.57778 40.706 13"/></g>
+                    </svg>
+                </button>
+            </div>
+            <div id="chessboard" class="bg-white border-black border-[5px] lg:border-[20px] relative grid-container h-[370px] w-[370px] lg:h-[700px] lg:w-[700px] mx-[20px]">                    
+            </div>
+            <button id="rerun-btn2" class="sm:hidden bg-button-green flex justify-center items-center gap-3 text-white text-[32px] font-bold rounded-[5px]  px-5 py-2" disabled onclick="findSolution()">
+                Rerun 
+                <svg
+                class="h-[32px] w-[32px] mt-1"  xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"><path d="M13 35H7V41"/><path d="M41 41H35V35"/><path d="M35 13H41V7"/><path d="M7 7H13V13"/><path d="M13 7.29395C7.57778 10.8714 4 17.0178 4 23.9999C4 25.0195 4.0763 26.0213 4.2235 26.9999"/><path d="M26.9999 43.7765C26.0213 43.9237 25.0195 44 23.9999 44C17.0178 44 10.8714 40.4222 7.29395 35"/><path d="M43.7765 21C43.9237 21.9786 44 22.9804 44 24C44 30.9821 40.4222 37.1285 35 40.706"/><path d="M21 4.2235C21.9786 4.0763 22.9804 4 24 4C30.9821 4 37.1285 7.57778 40.706 13"/></g>
+                </svg>
+            </button>
+       </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
