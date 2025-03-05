@@ -32,3 +32,7 @@ with the other population(list).
 There will a chance of random mutation.
 
 The whole algorithm will run for a specified number of generations and may not generate a solution!
+
+
+ WARNING: The script flask.exe is installed in 'C:\Users\USER\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.

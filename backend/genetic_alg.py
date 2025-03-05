@@ -1,45 +1,27 @@
 import random
 
-MAX_GENERATIONS = 30
-POPULATION_NO = 10
-N_QUEENS = 4
-MUTATION_RATE = 0.1
-
-
-def main():
+def genetic_algorithm(MAX_GENERATIONS, POPULATION_NO, N_QUEENS, MUTATION_RATE, POPULATIONS):
     generations = 1
-    populations = []
-    populations = generate_population(populations)
+    populations = POPULATIONS
     while generations <= MAX_GENERATIONS:
-        fitness_vals = fitness_function(populations)
+        fitness_vals = fitness_function(populations, N_QUEENS)
         best_fitness = max(fitness_vals)
         pop_index = fitness_vals.index(max(fitness_vals))
         print("-------------------------------------------------------------------------")
         print(f"Generation {generations}'s maximum fitness score is {max(fitness_vals)} for the population, {populations[pop_index]}")
         if best_fitness == N_QUEENS * (N_QUEENS - 1) // 2:
             print(f"Solution found in generation {generations}!")
-            break
+            return {"GenerationNo" : generations, "Board": populations[pop_index], "Populations": populations, "SolutionFound": True}
         probability_values, cumulative_prob_values = fitness_calculation(fitness_vals)
         offsprings = selection(populations, cumulative_prob_values)
-        new_gen = crossover(offsprings)
-        populations = mutation(new_gen)
+        new_gen = crossover(offsprings, N_QUEENS)
+        populations = mutation(new_gen, N_QUEENS, MUTATION_RATE)
         generations += 1
-    if generations >= MAX_GENERATIONS:
-        print("Solution not found")
+    if generations >= MAX_GENERATIONS: # The algorithm will always come to this because maximum generations will be set to 1 from the frontend.
+        return {"GenerationNo" : generations, "Board": populations[pop_index], "Populations": populations, "SolutionFound": False}
 
 
-def generate_population(populations):
-    single_pop = []
-    for i in range(POPULATION_NO):  # 4
-        for j in range(0, N_QUEENS):  # 8
-            element = random.randint(0, N_QUEENS - 1)
-            single_pop.append(element)
-        populations.append(single_pop)
-        single_pop = []
-    return populations
-
-
-def fitness_function(populations):
+def fitness_function(populations, N_QUEENS):
     fitness_values = []
     for pop in populations:
         non_attacking_queens = 0
@@ -83,7 +65,7 @@ def selection(populations, cumulative_prob_values):
     return offsprings
 
 
-def crossover(offsprings):
+def crossover(offsprings, N_QUEENS):
     # We calculate single crossover point
     crossover_point = random.randint(1, N_QUEENS-1)
     for i in range(0, len(offsprings) - 1, 2):
@@ -95,12 +77,9 @@ def crossover(offsprings):
     return offsprings
 
 
-def mutation(populations):
+def mutation(populations, N_QUEENS, MUTATION_RATE):
     for row in range(len(populations)):
         for col in range(N_QUEENS):
             if random.random() < MUTATION_RATE:
                 populations[row][col] = random.randrange(N_QUEENS)
     return populations
-
-
-main()
